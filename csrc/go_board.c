@@ -6,7 +6,8 @@
 
 void board_empty(uint8_t dim, uint8_t *b)
 {
-        memset(b, 0x00,(uint16_t)dim * (uint16_t)dim + 1);
+        uint16_t size = (((uint16_t)dim * (uint16_t)dim) >> 2) + 2;
+        memset(b, 0x00, size);
         b[0] = dim;
 }
 

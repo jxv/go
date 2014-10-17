@@ -40,7 +40,8 @@ instance Show Board where
 
 
 empty :: Word8 -> Board
-empty d = unsafePerformIO $ do let bs = BS.pack $ replicate (1 + (fromIntegral d) ^ 2) 0x00
+empty d = unsafePerformIO $ do let size = (div ((fromIntegral d) ^ 2) 4) + 2
+                               let bs = BS.pack (replicate size 0x00)
                                BS.unsafeUseAsCString bs (c_board_empty d . castPtr)
                                return (Board bs)
 
