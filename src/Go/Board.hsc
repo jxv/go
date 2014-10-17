@@ -23,7 +23,6 @@ import System.IO.Unsafe (unsafePerformIO)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Unsafe as BS
 import qualified Data.Binary as Bin
-import qualified Data.Binary.Get as Bin
 import Data.Binary (Binary)
 
 import Go.Stone
@@ -37,7 +36,7 @@ bytesByDim d = (div ((fromIntegral d) ^ 2) 4) + 2
 
 
 empty :: Word8 -> Board
-empty d = unsafePerformIO $ do let bs = BS.pack $ replicate (bytesByDim d) 0x00
+empty d = unsafePerformIO $ do let bs = BS.replicate (bytesByDim d) 0x00
                                BS.unsafeUseAsCString bs (c_board_empty d . castPtr)
                                return (Board bs)
 
@@ -98,10 +97,10 @@ instance Show Board where
 
 
 instance Binary Board where
-    put (Board bs) = Bin.put bs
+    put (Board bs) = mapM_ Bin.put (BS.unpack bs)
     get = do dim <- Bin.getWord8
-             body <- Bin.getByteString $ (bytesByDim dim) - 1 -- Already grabbed one byte
-             return $ Board (BS.cons dim body)
+             body <- sequence $ replicate ((bytesByDim dim) - 1) Bin.getWord8 -- Already grabbed one byte
+             return (Board $ BS.pack (dim:body))
 
 
 foreign import ccall unsafe "board_empty"
