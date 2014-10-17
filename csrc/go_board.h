@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 
-const uint8_t MAX_DIM = 19;
-const uint8_t BOARD_SIZE = 91;
-const uint8_t EMPTY = 0x00;
-const uint8_t BLACK = 0x01;
-const uint8_t WHITE = 0x02;
+#define MAX_DIM 19
+#define BOARD_SIZE  91
+#define EMPTY   0x00
+#define BLACK   0x01
+#define WHITE   0x02
 
 
 void board_empty(uint8_t dim, uint8_t *b);
