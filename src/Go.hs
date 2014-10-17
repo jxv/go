@@ -5,5 +5,5 @@ module Go
 
 import Prelude hiding (lookup)
 
-import Go.Stone
-import Go.Board
+import Go.Stone (Stone(..))
+import Go.Board (Board, (!), dim, empty, insert, lookup)

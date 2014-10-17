@@ -4,8 +4,6 @@
 #include <stdint.h>
 
 
-#define MAX_DIM 19
-#define BOARD_SIZE  91
 #define EMPTY   0x00
 #define BLACK   0x01
 #define WHITE   0x02
