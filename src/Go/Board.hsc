@@ -22,6 +22,9 @@ import Foreign.Ptr
 import System.IO.Unsafe (unsafePerformIO)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Unsafe as BS
+import qualified Data.Binary as Bin
+import qualified Data.Binary.Get as Bin
+import Data.Binary (Binary)
 
 import Go.Stone
 
@@ -29,19 +32,12 @@ import Go.Stone
 newtype Board = Board { unBoard :: BS.ByteString }
 
 
-instance Show Board where
-    show b = let d = dim b
-                 showDim = show d
-                 hBorder = "+" ++ (replicate (fromIntegral d) '-') ++ "+\n"
-                 showMS ms = case ms of Nothing -> ' '; Just Black -> 'b'; Just White -> 'w'
-                 row y = [showMS $ lookup (y,x) b | x <- (init [0..d]) ]
-                 body = hBorder ++ unlines ["|" ++ row y ++ "|" | y <- (init [0..d]) ] ++ hBorder
-             in "[" ++ showDim ++ "x" ++ showDim ++ "]\n" ++ body
+bytesByDim :: Word8 -> Int
+bytesByDim d = (div ((fromIntegral d) ^ 2) 4) + 2
 
 
 empty :: Word8 -> Board
-empty d = unsafePerformIO $ do let size = (div ((fromIntegral d) ^ 2) 4) + 2
-                               let bs = BS.pack (replicate size 0x00)
+empty d = unsafePerformIO $ do let bs = BS.pack $ replicate (bytesByDim d) 0x00
                                BS.unsafeUseAsCString bs (c_board_empty d . castPtr)
                                return (Board bs)
 
@@ -89,6 +85,23 @@ insert (y,x) ms b = set b y x s
 
 unsafePrint :: Board -> IO ()
 unsafePrint b = BS.unsafeUseAsCString (unBoard b) (c_board_print . castPtr)
+
+
+instance Show Board where
+    show b = let d = dim b
+                 showDim = show d
+                 hBorder = "+" ++ (replicate (fromIntegral d) '-') ++ "+\n"
+                 showMS ms = case ms of Nothing -> ' '; Just Black -> 'b'; Just White -> 'w'
+                 row y = [showMS $ lookup (y,x) b | x <- (init [0..d]) ]
+                 body = hBorder ++ unlines ["|" ++ row y ++ "|" | y <- (init [0..d]) ] ++ hBorder
+             in "[" ++ showDim ++ "x" ++ showDim ++ "]\n" ++ body
+
+
+instance Binary Board where
+    put (Board bs) = Bin.put bs
+    get = do dim <- Bin.getWord8
+             body <- Bin.getByteString $ (bytesByDim dim) - 1 -- Already grabbed one byte
+             return $ Board (BS.cons dim body)
 
 
 foreign import ccall unsafe "board_empty"
