@@ -61,11 +61,11 @@ neighbors (y,x) b = let match' = match b
 -- | /O(4)/
 neighbors' :: (Word8, Word8) -> Board -> [((Word8, Word8), Maybe Stone)]
 neighbors' (y,x) b = let match' = match b
-                        u = match' (y-1, x)
-                        l = match' (y,   x-1)
-                        d = match' (y+1, x)
-                        r = match' (y,   x+1)
-                        b_d = dim b
+                         u = match' (y-1, x)
+                         l = match' (y,   x-1)
+                         d = match' (y+1, x)
+                         r = match' (y,   x+1)
+                         b_d = dim b
                     in filter (\((y,x),_) -> y < b_d && x < b_d) [u,l,r,d]
 
 
