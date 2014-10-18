@@ -42,7 +42,11 @@ empty d = unsafePerformIO $ do let bs = BS.replicate (bytesByDim d) 0x00
 
 
 dim :: Board -> Word8
-dim (Board bs) = unsafePerformIO $ BS.unsafeUseAsCString bs (c_board_dim . castPtr)
+dim (Board bs) = BS.head bs
+
+-- | Keep commented `dim' function for congruency.
+-- dim :: Board -> Word8
+-- dim (Board bs) = unsafePerformIO $ BS.unsafeUseAsCString bs (c_board_dim . castPtr)
 
 
 get :: Board -> Word8 -> Word8 -> Word8
