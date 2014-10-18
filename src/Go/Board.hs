@@ -4,6 +4,7 @@ module Go.Board
     , dim
     , empty
     , lookup
+    , unsafePrint
     , neighbors
     , neighbors'
     , null
@@ -30,7 +31,7 @@ import Prelude hiding (lookup, null)
 import Data.Word
 
 import Go.Stone
-import Go.Board.FFI (Board, (!), dim, empty, insert', lookup)
+import Go.Board.FFI (Board, (!), dim, empty, insert', lookup, unsafePrint)
 
 
 match :: Board -> (Word8, Word8) -> ((Word8, Word8), Maybe Stone)
