@@ -20,11 +20,11 @@ library
   includes:            csrc/go_board.h
   c-sources:           csrc/go_board.c
 
-  exposed-modules:     Go
+  exposed-modules:     Go,
+                       Go.Stone,
+                       Go.Board
 
-  other-modules:       Go.Board,
-                       Go.Board.FFI,
-                       Go.Stone
+  other-modules:       Go.Board.FFI
 
   other-extensions:    CPP,
                        ForeignFunctionInterface,
