@@ -44,7 +44,7 @@ module Go.Board
     , fromList'
     ) where
 
-import Prelude hiding (lookup, null, map)
+import Prelude hiding (lookup, null, map, filter)
 import qualified Prelude as P
 
 import Data.Word
@@ -89,7 +89,7 @@ neighbors' (y,x) b = let match' = match b
                          d = match' (y+1, x)
                          r = match' (y,   x+1)
                          b_d = dim b
-                    in filter (\((y,x),_) -> y < b_d && x < b_d) [u,l,r,d]
+                    in P.filter (\((y,x),_) -> y < b_d && x < b_d) [u,l,r,d]
 
 
 -- | /O(dim^2)/
@@ -257,12 +257,23 @@ Filter
 --------------------------------------------------------------------}
 
 
+-- | /O(dim^2)/
+filter :: (Stone -> Bool) -> Board -> Board
+filter f b =
+    let d = dim b
+    in foldr (\yx b' -> fromMaybe b' $ fmap (\s -> if f s then b' else delete yx b')
+                                            (lookup yx b'))
+             b
+             [(y,x) | y <- init [0..d], x <- init [0..d]]
+
+
+-- | /O(dim^2)/
 filterWithKey :: (Pos -> Stone -> Bool) -> Board -> Board
 filterWithKey f b =
     let d = dim b
-    in  foldr (\yx b' -> fromMaybe b' $ fmap (\s -> if f yx s then b' else delete yx b')
-                                             (lookup yx b'))
-              b
-              [(y,x) | y <- init [0..d], x <- init [0..d]]
+    in foldr (\yx b' -> fromMaybe b' $ fmap (\s -> if f yx s then b' else delete yx b')
+                                            (lookup yx b'))
+             b
+             [(y,x) | y <- init [0..d], x <- init [0..d]]
 
 
