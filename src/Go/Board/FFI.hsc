@@ -6,7 +6,7 @@ module Go.Board.FFI
     , (!)
     , dim
     , empty
-    , insert
+    , insert'
     , lookup
     , unsafePrint
     ) where
@@ -81,8 +81,8 @@ set b y x s = unsafePerformIO $ do
     return b'
 
 
-insert :: (Word8, Word8) -> Maybe Stone -> Board -> Board
-insert (y,x) ms b = if y <= d && x <= d then set b y x s else b
+insert' :: (Word8, Word8) -> Maybe Stone -> Board -> Board
+insert' (y,x) ms b = if y <= d && x <= d then set b y x s else b
     where d = dim b
           s = case ms of Just Black -> c_BLACK; Just White -> c_WHITE; Nothing -> c_EMPTY
 
