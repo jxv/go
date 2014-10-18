@@ -48,6 +48,7 @@ import Prelude hiding (lookup, null, map)
 import qualified Prelude as P
 
 import Data.Word
+import Data.Maybe
 import Control.Arrow (second)
 
 import Go.Stone
@@ -249,3 +250,19 @@ fromList d = foldl (\b (yx,s) -> insert yx s b) (empty d)
 -- | /O(n)/
 fromList' :: Word8 -> [(Pos, Maybe Stone)] -> Board
 fromList' d = foldl (\b (yx,ms) -> insert' yx ms b) (empty d)
+
+
+{--------------------------------------------------------------------
+Filter
+--------------------------------------------------------------------}
+
+
+filterWithKey :: (Pos -> Stone -> Bool) -> Board -> Board
+filterWithKey f b =
+    let d = dim b
+    in  foldr (\yx b' -> fromMaybe b' $ fmap (\s -> if f yx s then b' else delete yx b')
+                                             (lookup yx b'))
+              b
+              [(y,x) | y <- init [0..d], x <- init [0..d]]
+
+
