@@ -23,6 +23,7 @@ library
   exposed-modules:     Go
 
   other-modules:       Go.Board,
+                       Go.Board.FFI,
                        Go.Stone
 
   other-extensions:    CPP,

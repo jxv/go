@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-module Go.Board
+module Go.Board.FFI
     ( Board
     , (!)
     , dim
@@ -82,8 +82,9 @@ set b y x s = unsafePerformIO $ do
 
 
 insert :: (Word8, Word8) -> Maybe Stone -> Board -> Board
-insert (y,x) ms b = set b y x s
-    where s = case ms of Just Black -> c_BLACK; Just White -> c_WHITE; Nothing -> c_EMPTY
+insert (y,x) ms b = if y <= d && x <= d then set b y x s else b
+    where d = dim b
+          s = case ms of Just Black -> c_BLACK; Just White -> c_WHITE; Nothing -> c_EMPTY
 
 
 unsafePrint :: Board -> IO ()
