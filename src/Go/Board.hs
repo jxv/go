@@ -2,6 +2,8 @@ module Go.Board
     ( module Go.Board.FFI
     , neighbors
     , toList
+    , fromList
+    , elems
     ) where
 
 import Prelude hiding (lookup)
@@ -35,4 +37,15 @@ toList :: Board -> [((Word8, Word8), Stone)]
 toList b = stonyList [match' (y,x) | y <- init [0..d], x <- init [0..d]]
     where d = dim b
           match' = match b
+
+
+fromList :: Word8 -> [((Word8, Word8), Stone)] -> Board
+fromList d = foldr (\(yx,s) b -> insert yx (Just s) b) (empty d)
+
+
+-- TODO: don't use `toList'
+elems :: Board -> [Stone]
+elems b = map snd (toList b) 
+
+
 
