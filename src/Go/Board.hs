@@ -40,7 +40,7 @@ toList b = stonyList [match' (y,x) | y <- init [0..d], x <- init [0..d]]
 
 
 fromList :: Word8 -> [((Word8, Word8), Stone)] -> Board
-fromList d = foldr (\(yx,s) b -> insert yx (Just s) b) (empty d)
+fromList d = foldl (\b (yx,s) -> insert yx (Just s) b) (empty d)
 
 
 -- TODO: don't use `toList'
