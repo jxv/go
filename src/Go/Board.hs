@@ -96,9 +96,18 @@ neighbors' (y,x) b = let match' = match b
 
 
 group :: Pos -> Board -> Maybe ([Pos], Stone)
-group yx b = (flip fmap $ lookup yx b) $ \s ->
-    let k = s
-    in (yx : [], s)
+group yx b = (flip fmap $ lookup yx b) $ \stone -> (search stone [] [yx], stone)
+ where
+    search :: Stone -> [Pos] -> [Pos] -> [Pos]
+    search stone visited stack = case stack of
+        []         -> visited
+        (pos:rest) -> search stone (pos:visited) $ (newNeighbors stone pos stack visited) ++ rest
+    newNeighbors :: Stone -> Pos -> [Pos] -> [Pos] -> [Pos]
+    newNeighbors stone pos stack visited = P.map P.fst $
+        P.filter (\(pos', st) -> st == stone
+                              && P.not (P.elem pos' stack)
+                              && P.not (P.elem pos' visited))
+                 (neighbors pos b)
 
 
 {--------------------------------------------------------------------
