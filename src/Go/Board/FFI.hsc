@@ -3,6 +3,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Go.Board.FFI
     ( Board
+    , Pos
     , (!)
     , dim
     , empty
@@ -28,6 +29,7 @@ import Data.Binary (Binary)
 import Go.Stone
 
 
+type Pos = (Word8, Word8)
 newtype Board = Board { unBoard :: BS.ByteString }
 
 
@@ -53,7 +55,7 @@ get :: Board -> Word8 -> Word8 -> Word8
 get (Board bs) y x = unsafePerformIO $ BS.unsafeUseAsCString bs (\ptr -> c_board_get (castPtr ptr) y x)
 
 
-(!) :: Board -> (Word8, Word8) -> Stone
+(!) :: Board -> Pos -> Stone
 b ! (y,x)
     | y >= d || x >= d = error "index is too large"
     | s == c_BLACK     = Black
@@ -63,7 +65,7 @@ b ! (y,x)
           s = get b y x
    
     
-lookup ::(Word8, Word8) -> Board -> Maybe Stone
+lookup :: Pos -> Board -> Maybe Stone
 lookup (y,x) b
     | y >= d || x >= d = Nothing
     | s == c_BLACK     = Just Black
@@ -81,7 +83,7 @@ set b y x s = unsafePerformIO $ do
     return b'
 
 
-insert' :: (Word8, Word8) -> Maybe Stone -> Board -> Board
+insert' :: Pos -> Maybe Stone -> Board -> Board
 insert' (y,x) ms b = if y <= d && x <= d then set b y x s else b
     where d = dim b
           s = case ms of Just Black -> c_BLACK; Just White -> c_WHITE; Nothing -> c_EMPTY

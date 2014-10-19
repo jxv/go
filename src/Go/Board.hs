@@ -11,6 +11,8 @@ module Go.Board
     --
     , neighbors
     , neighbors'
+    , group
+    --
     , null
     , size
     --
@@ -42,6 +44,8 @@ module Go.Board
     , toList'
     , fromList
     , fromList'
+    , filter
+    , filterWithKey
     ) where
 
 import Prelude hiding (lookup, null, map, filter)
@@ -49,12 +53,11 @@ import qualified Prelude as P
 
 import Data.Word
 import Data.Maybe
+import Control.Applicative hiding (empty)
 import Control.Arrow (second)
 
 import Go.Stone
-import Go.Board.FFI (Board, (!), dim, empty, insert', lookup, unsafePrint)
-
-type Pos = (Word8, Word8)
+import Go.Board.FFI (Board, Pos, (!), dim, empty, insert', lookup, unsafePrint)
 
 match :: Board -> Pos -> (Pos, Maybe Stone)
 match b yx = (yx, lookup yx b)
@@ -67,7 +70,7 @@ stonyList = foldr accumMay []
 
 
 {--------------------------------------------------------------------
-Query
+Adjacent
 --------------------------------------------------------------------}
 
 
@@ -90,6 +93,17 @@ neighbors' (y,x) b = let match' = match b
                          r = match' (y,   x+1)
                          b_d = dim b
                     in P.filter (\((y,x),_) -> y < b_d && x < b_d) [u,l,r,d]
+
+
+group :: Pos -> Board -> Maybe ([Pos], Stone)
+group yx b = (flip fmap $ lookup yx b) $ \s ->
+    let k = s
+    in (yx : [], s)
+
+
+{--------------------------------------------------------------------
+Query
+--------------------------------------------------------------------}
 
 
 -- | /O(dim^2)/
