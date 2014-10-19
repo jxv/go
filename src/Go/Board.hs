@@ -1,6 +1,7 @@
 module Go.Board
     ( Board
     , Pos
+    , Group
     --
     , (!)
     , dim
@@ -12,6 +13,8 @@ module Go.Board
     , neighbors
     , neighbors'
     , group
+    , liberty
+    , liberties
     --
     , null
     , size
@@ -50,6 +53,7 @@ module Go.Board
 
 import Prelude hiding (lookup, null, map, filter)
 import qualified Prelude as P
+import qualified Data.List as L
 
 import Data.Word
 import Data.Maybe
@@ -58,6 +62,10 @@ import Control.Arrow (second)
 
 import Go.Stone
 import Go.Board.FFI (Board, Pos, (!), dim, empty, insert', lookup, unsafePrint)
+
+
+type Group = ([Pos], Stone)
+
 
 match :: Board -> Pos -> (Pos, Maybe Stone)
 match b yx = (yx, lookup yx b)
@@ -95,7 +103,8 @@ neighbors' (y,x) b = let match' = match b
                     in P.filter (\((y,x),_) -> y < b_d && x < b_d) [u,l,r,d]
 
 
-group :: Pos -> Board -> Maybe ([Pos], Stone)
+--
+group :: Pos -> Board -> Maybe Group
 group yx b = (flip fmap $ lookup yx b) $ \stone -> (search stone [] [yx], stone)
  where
     search :: Stone -> [Pos] -> [Pos] -> [Pos]
@@ -108,6 +117,16 @@ group yx b = (flip fmap $ lookup yx b) $ \stone -> (search stone [] [yx], stone)
                               && P.not (P.elem pos' stack)
                               && P.not (P.elem pos' visited))
                  (neighbors pos b)
+
+
+--
+liberty :: Pos -> Board -> [Pos]
+liberty yx b = P.map fst $ P.filter (isNothing . snd) (neighbors' yx b)
+
+
+--
+liberties :: [Pos] -> Board -> [Pos]
+liberties ps b = L.nub $ L.concat $ P.map (flip liberty b) ps
 
 
 {--------------------------------------------------------------------
