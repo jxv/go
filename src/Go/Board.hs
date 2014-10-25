@@ -110,7 +110,8 @@ group yx b = (flip fmap $ lookup yx b) $ \stone -> (search stone [] [yx], stone)
     search :: Stone -> [Pos] -> [Pos] -> [Pos]
     search stone visited stack = case stack of
         []         -> visited
-        (pos:rest) -> search stone (pos:visited) $ (newNeighbors stone pos stack visited) ++ rest
+        (pos:rest) -> search stone (pos:visited) $ (newNeighbors stone pos stack visited)
+                                                   ++ rest
     newNeighbors :: Stone -> Pos -> [Pos] -> [Pos] -> [Pos]
     newNeighbors stone pos stack visited = P.map P.fst $
         P.filter (\(pos', st) -> st == stone
@@ -177,7 +178,8 @@ insertWith f yx s b = insert yx (case lookup yx b of Nothing -> s; Just old -> f
 
 -- | /O(1)/
 -- > insertWith' (\mNew mOld -> ..) (y,x) mStone board
-insertWith' :: (Maybe Stone -> Maybe Stone -> Maybe Stone) -> Pos -> Maybe Stone -> Board -> Board
+insertWith' :: (Maybe Stone -> Maybe Stone -> Maybe Stone) -> Pos -> Maybe Stone -> Board
+            -> Board
 insertWith' f yx ms b = insert' yx (f ms (lookup yx b)) b
 
 
@@ -222,7 +224,8 @@ updateWithKey f yx b = case lookup yx b of Nothing -> b; Just s -> insert' yx (f
 
 
 -- | /O(1)/
-updateLookupWithKey :: (Pos -> Stone -> Maybe Stone) -> Pos -> Board -> (Maybe Stone, Board)
+updateLookupWithKey :: (Pos -> Stone -> Maybe Stone) -> Pos -> Board
+                    -> (Maybe Stone, Board)
 updateLookupWithKey f yx b = case lookup yx b of Nothing -> (Nothing, b)
                                                  Just s -> let ms = f yx s
                                                            in (ms, insert' yx ms b)
@@ -317,5 +320,4 @@ filterWithKey f b =
                                             (lookup yx b'))
              b
              [(y,x) | y <- init [0..d], x <- init [0..d]]
-
 

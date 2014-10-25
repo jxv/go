@@ -126,6 +126,6 @@ foreign import ccall unsafe "board_print"
     c_board_print :: Ptr Word8 -> IO ()
 
 c_EMPTY, c_BLACK, c_WHITE :: Word8
-c_EMPTY = 0x00
-c_BLACK = 0x01
-c_WHITE = 0x02
+c_EMPTY = (#const EMPTY)
+c_BLACK = (#const BLACK)
+c_WHITE = (#const WHITE)
