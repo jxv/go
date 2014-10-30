@@ -4,6 +4,13 @@
 #include <memory.h>
 
 
+int sizeof_board_by_dim(uint8_t dim)
+{
+	// dim_byte + data_bytes + extra_data_byte
+	return 1 + (dim * dim) / 4 + 1;
+}
+
+
 void board_empty(uint8_t dim, uint8_t *b)
 {
         uint16_t size = (((uint16_t)dim * (uint16_t)dim) >> 2) + 2;

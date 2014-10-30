@@ -34,7 +34,7 @@ newtype Board = Board { unBoard :: BS.ByteString }
 
 
 bytesByDim :: Word8 -> Int
-bytesByDim d = (div ((fromIntegral d) ^ 2) 4) + 2
+bytesByDim d = fromIntegral (c_sizeof_board_by_dim d)
 
 
 empty :: Word8 -> Board
@@ -109,6 +109,9 @@ instance Binary Board where
              body <- sequence $ replicate ((bytesByDim dim) - 1) Bin.getWord8 -- Already grabbed one byte
              return (Board $ BS.pack (dim:body))
 
+
+foreign import ccall unsafe "sizeof_board_by_dim"
+    c_sizeof_board_by_dim :: Word8 -> CInt
 
 foreign import ccall unsafe "board_empty"
     c_board_empty :: Word8 -> Ptr Word8 -> IO ()

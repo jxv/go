@@ -9,6 +9,7 @@
 #define WHITE   0x02
 
 
+int sizeof_board_by_dim(uint8_t dim);
 void board_empty(uint8_t dim, uint8_t *b);
 uint8_t board_dim(const uint8_t* b);
 uint8_t board_get(const uint8_t* b, uint8_t y, uint8_t x);
