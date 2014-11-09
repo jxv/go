@@ -12,13 +12,13 @@ category:            Game
 build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md,
-                     csrc/*\.h,
-                     csrc/*\.c
+                     cbits/*\.h,
+                     cbits/*\.c
 
 library
-  include-dirs:        csrc
-  includes:            csrc/go_board.h
-  c-sources:           csrc/go_board.c
+  include-dirs:        cbits
+  includes:            cbits/go_board.h
+  c-sources:           cbits/go_board.c
 
   exposed-modules:     Go,
                        Go.Stone,
